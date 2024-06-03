@@ -1,0 +1,55 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>Dynamic Form</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <form [formGroup]="form" (ngSubmit)="onSubmit()">
+    <ion-item>
+      <ion-label>Select Field</ion-label>
+      <ion-select formControlName="selectedField">
+        <ion-select-option
+          *ngFor="let config of formConfig"
+          [value]="config.value"
+        >
+          {{ config.label }}
+        </ion-select-option>
+      </ion-select>
+    </ion-item>
+
+    <ng-container *ngFor="let field of fields">
+      <ion-item *ngIf="field.type === 'input'">
+        <ion-label>{{ field.label }}</ion-label>
+        <ion-input
+          [type]="field.inputType || 'text'"
+          formControlName="{{ field.name }}"
+        ></ion-input>
+      </ion-item>
+
+      <ion-item *ngIf="field.type === 'dropdown'">
+        <ion-label>{{ field.label }}</ion-label>
+        <ion-select formControlName="{{ field.name }}">
+          <ion-select-option
+            *ngFor="let option of field.options"
+            [value]="option"
+          >
+            {{ option }}
+          </ion-select-option>
+        </ion-select>
+      </ion-item>
+
+      <ion-item *ngIf="field.type === 'radio'">
+        <ion-label>{{ field.label }}</ion-label>
+        <ion-radio-group formControlName="{{ field.name }}">
+          <ion-item *ngFor="let option of field.options">
+            <ion-label>{{ option }}</ion-label>
+            <ion-radio [value]="option"></ion-radio>
+          </ion-item>
+        </ion-radio-group>
+      </ion-item>
+    </ng-container>
+
+    <ion-button type="submit" [disabled]="!form.valid">Submit</ion-button>
+  </form>
+</ion-content>

@@ -1,5 +1,5 @@
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Component, inject } from '@angular/core';
 import {
   FormBuilder,
   FormGroup,
@@ -25,23 +25,23 @@ import {
   IonCol,
 } from '@ionic/angular/standalone';
 
-interface FieldModel {
-  label: string;
-  value: string;
-}
-
 interface FormFieldConfig {
   type: string;
   label: string;
   name: string;
   inputType?: string;
   options?: string[];
+  condition?: {
+    fieldName: string;
+    value: any;
+    fields: FormFieldConfig[];
+  };
 }
 
 @Component({
-  selector: 'app-home',
-  templateUrl: 'home.page.html',
-  styleUrls: ['home.page.scss'],
+  selector: 'app-dynamic-form',
+  templateUrl: './dynamic-form.page.html',
+  styleUrls: ['./dynamic-form.page.scss'],
   standalone: true,
   imports: [
     IonCol,
@@ -64,17 +64,15 @@ interface FormFieldConfig {
     CommonModule,
   ],
 })
-export class HomePage {
-  private formBuilder = inject(FormBuilder);
-
-  form!: FormGroup;
+export class DynamicFormPage implements OnInit {
+  form: FormGroup = new FormGroup({});
   formConfig = this.getFormConfig();
   fields: FormFieldConfig[] = [];
 
-  constructor() {}
+  constructor(private fb: FormBuilder) {}
 
   ngOnInit() {
-    this.form = this.formBuilder.group({
+    this.form = this.fb.group({
       selectedField: [''],
     });
 
@@ -85,20 +83,9 @@ export class HomePage {
     this.generateForm();
   }
 
-  onSelectChange() {
-    this.generateForm();
-  }
-
-  generateForm() {
-    this.form.get('selectedField')?.valueChanges.subscribe((value) => {
-      this.fields = this.getFieldConfig(value);
-      this.buildForm();
-    });
-  }
-
   getFormConfig() {
     return [
-      { label: 'Field 1', value: 'field_1' },
+      { label: 'Field 1', value: 'field_1', children: [] },
       { label: 'Field 2', value: 'field_2' },
       { label: 'Field 3', value: 'field_3' },
       { label: 'Field 4', value: 'field_4' },
@@ -114,6 +101,17 @@ export class HomePage {
           label: 'Dropdown 1',
           name: 'dropdown1',
           options: ['Option 1', 'Option 2'],
+          condition: {
+            fieldName: 'dropdown1',
+            value: 'Option 1',
+            fields: [
+              {
+                type: 'input',
+                label: 'Conditional Input',
+                name: 'conditionalInput',
+              },
+            ],
+          },
         },
       ],
       field_2: [
@@ -122,6 +120,17 @@ export class HomePage {
           label: 'Radio 1',
           name: 'radio1',
           options: ['Radio 1', 'Radio 2'],
+          condition: {
+            fieldName: 'radio1',
+            value: 'Radio 2',
+            fields: [
+              {
+                type: 'input',
+                label: 'Conditional Input 2',
+                name: 'conditionalInput2',
+              },
+            ],
+          },
         },
         {
           type: 'input',
@@ -130,8 +139,20 @@ export class HomePage {
           inputType: 'number',
         },
       ],
+      // Add more field configs here...
     };
     return configs[value] || [];
+  }
+
+  onSelectChange() {
+    this.generateForm();
+  }
+
+  generateForm() {
+    this.form.get('selectedField')?.valueChanges.subscribe((value) => {
+      this.fields = this.getFieldConfig(value);
+      this.buildForm();
+    });
   }
 
   buildForm() {
@@ -140,8 +161,27 @@ export class HomePage {
     };
     this.fields.forEach((field) => {
       group[field.name] = new FormControl('');
+      if (field.condition) {
+        field.condition.fields.forEach((condField) => {
+          group[condField.name] = new FormControl('');
+        });
+      }
     });
-    this.form = this.formBuilder.group(group);
+    this.form = this.fb.group(group);
+  }
+
+  updateConditionalFields(field: FormFieldConfig, selectedValue: any) {
+    const group = { ...this.form.value };
+    if (selectedValue === field.condition?.value) {
+      field.condition?.fields.forEach((condField) => {
+        group[condField.name] = new FormControl('');
+      });
+    } else {
+      field.condition?.fields.forEach((condField) => {
+        delete group[condField.name];
+      });
+    }
+    this.form = this.fb.group(group);
   }
 
   onSubmit() {

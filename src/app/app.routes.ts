@@ -10,4 +10,11 @@ export const routes: Routes = [
     redirectTo: 'home',
     pathMatch: 'full',
   },
+  {
+    path: 'dynamic-form',
+    loadComponent: () =>
+      import('./pages/dynamic-form/dynamic-form.page').then(
+        (m) => m.DynamicFormPage
+      ),
+  },
 ];

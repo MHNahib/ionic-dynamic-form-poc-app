@@ -31,6 +31,7 @@ interface FormFieldConfig {
   name: string;
   inputType?: string;
   options?: string[];
+  size?: number | string;
   condition?: {
     fieldName: string;
     value: any;
@@ -95,12 +96,13 @@ export class DynamicFormPage implements OnInit {
   getFieldConfig(value: string): FormFieldConfig[] {
     const configs: { [key: string]: FormFieldConfig[] } = {
       field_1: [
-        { type: 'input', label: 'Input 1', name: 'input1' },
+        { type: 'input', label: 'Input 1', name: 'input1', size: 12 },
         {
           type: 'dropdown',
           label: 'Dropdown 1',
           name: 'dropdown1',
           options: ['Option 1', 'Option 2'],
+          size: 6,
           condition: {
             fieldName: 'dropdown1',
             value: 'Option 1',
@@ -109,6 +111,7 @@ export class DynamicFormPage implements OnInit {
                 type: 'input',
                 label: 'Conditional Input',
                 name: 'conditionalInput',
+                size: 6,
               },
             ],
           },
@@ -120,6 +123,7 @@ export class DynamicFormPage implements OnInit {
           label: 'Radio 1',
           name: 'radio1',
           options: ['Radio 1', 'Radio 2'],
+          size: 5,
           condition: {
             fieldName: 'radio1',
             value: 'Radio 2',
@@ -128,6 +132,7 @@ export class DynamicFormPage implements OnInit {
                 type: 'input',
                 label: 'Conditional Input 2',
                 name: 'conditionalInput2',
+                size: 12,
               },
             ],
           },
@@ -137,9 +142,9 @@ export class DynamicFormPage implements OnInit {
           label: 'Input 2',
           name: 'input2',
           inputType: 'number',
+          size: 10,
         },
       ],
-      // Add more field configs here...
     };
     return configs[value] || [];
   }

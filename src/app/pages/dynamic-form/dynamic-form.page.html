@@ -23,9 +23,12 @@
       </ion-select>
     </div>
 
-    <div>
-      @for (field of fields; track $index) { @if (field.type === 'input') {
-      <ion-col size="6" class="my-2">
+    <ion-row>
+      @for (field of fields; track $index) {
+
+      <!-- input -->
+      @if (field.type === 'input') {
+      <ion-col [size]="field.size ?? 12" class="my-2">
         <ion-item>
           <ion-input
             fill="outline"
@@ -42,8 +45,11 @@
           </ion-input>
         </ion-item>
       </ion-col>
-      } @if (field.type === 'dropdown') {
-      <ion-col size="6" class="my-2">
+      }
+
+      <!-- dropdown -->
+      @if (field.type === 'dropdown') {
+      <ion-col [size]="field.size ?? 12" class="my-2">
         <ion-item>
           <ion-select
             fill="outline"
@@ -60,8 +66,11 @@
           </ion-select>
         </ion-item>
       </ion-col>
-      } @if (field.type === 'radio') {
-      <ion-col size="6" class="my-2">
+      }
+
+      <!-- radio -->
+      @if (field.type === 'radio') {
+      <ion-col [size]="field.size ?? 12" class="my-2">
         <ion-item>
           <ion-row>
             <ion-col size="12">
@@ -80,10 +89,17 @@
           </ion-row>
         </ion-item>
       </ion-col>
-      } @if (field.condition && form.get(field.condition.fieldName)?.value ===
-      field.condition.value) { @for (condField of field.condition.fields; track
-      $index) { @if (condField.type === 'input') {
-      <ion-col size="6" class="my-2">
+      }
+
+      <!-- condition -->
+      @if (field.condition && form.get(field.condition.fieldName)?.value ===
+      field.condition.value) {
+      <!-- Conditional fields  -->
+      @for (condField of field.condition.fields; track $index) {
+
+      <!-- input -->
+      @if (condField.type === 'input') {
+      <ion-col [size]="condField.size ?? 12" class="my-2">
         <ion-item>
           <ion-input
             fill="outline"
@@ -100,8 +116,11 @@
           </ion-input>
         </ion-item>
       </ion-col>
-      } @if (condField.type === 'dropdown') {
-      <ion-col size="6" class="my-2">
+      }
+
+      <!-- dropdown -->
+      @if (condField.type === 'dropdown') {
+      <ion-col [size]="condField.size ?? 12" class="my-2">
         <ion-item>
           <ion-select
             fill="outline"
@@ -118,8 +137,11 @@
           </ion-select>
         </ion-item>
       </ion-col>
-      } @if (condField.type === 'radio') {
-      <ion-col size="6" class="my-2">
+      }
+
+      <!-- radio -->
+      @if (condField.type === 'radio') {
+      <ion-col [size]="condField.size ?? 12" class="my-2">
         <ion-item>
           <ion-row>
             <ion-col size="12">
@@ -139,7 +161,7 @@
         </ion-item>
       </ion-col>
       } } } }
-    </div>
+    </ion-row>
 
     <ion-button type="submit" [disabled]="!form.valid">Submit</ion-button>
   </form>

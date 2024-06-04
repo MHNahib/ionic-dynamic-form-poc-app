@@ -17,4 +17,11 @@ export const routes: Routes = [
         (m) => m.DynamicFormPage
       ),
   },
+  {
+    path: 'dynamic-required',
+    loadComponent: () =>
+      import('./pages/dynamic-required/dynamic-required.page').then(
+        (m) => m.DynamicRequiredPage
+      ),
+  },
 ];

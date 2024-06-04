@@ -244,12 +244,14 @@ export class DynamicRequiredPage implements OnInit {
         this.form.addControl(condField.name, condControl);
       });
     } else {
-      field?.condition?.fields.forEach((condField) => {
-        if (this.form.contains(condField.name))
-          this.form.removeControl(condField.name);
-      });
+      field.condition &&
+        field?.condition?.fields.forEach((condField) => {
+          if (this.form.contains(condField.name)) {
+            this.form.removeControl(condField.name);
+          }
+        });
     }
 
-    // console.log('form grp: ', this.form.valid, this.form.value);
+    console.log('form grp: ', this.form.valid, this.form.value);
   }
 }

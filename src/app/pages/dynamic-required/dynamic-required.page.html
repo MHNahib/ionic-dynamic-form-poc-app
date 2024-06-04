@@ -98,11 +98,14 @@
             <ion-col size="12">
               <ion-label class="font-bold">{{ field.label }}</ion-label>
             </ion-col>
-            <ion-radio-group formControlName="{{ field.name }}">
+            <ion-radio-group
+              formControlName="{{ field.name }}"
+              (ionChange)="handleChange($event, field, $index)"
+            >
               <div class="w-full flex gap-2 flex-col">
                 @for (option of field.options; track $index) {
                 <div class="flex gap-2 my-2">
-                  <ion-radio [value]="option" class=""></ion-radio>
+                  <ion-radio [value]="option"></ion-radio>
                   <ion-label>{{ option }}</ion-label>
                 </div>
                 }

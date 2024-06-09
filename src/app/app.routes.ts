@@ -24,4 +24,8 @@ export const routes: Routes = [
         (m) => m.DynamicRequiredPage
       ),
   },
+  {
+    path: 'assets-from',
+    loadComponent: () => import('./pages/assets-from/assets-from.page').then( m => m.AssetsFromPage)
+  },
 ];

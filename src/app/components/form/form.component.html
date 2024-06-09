@@ -1,0 +1,282 @@
+<!-- <div class="mb-2 mt-4 mx-4">
+    <ion-select
+      fill="outline"
+      label="Select Field"
+      label-placement="floating"
+      formControlName="selectedField"
+      interface="popover"
+      (ionChange)="onSelectChange()"
+    >
+      @for (config of formConfig; track $index) {
+      <ion-select-option [value]="config.value">
+        {{ config.label }}
+      </ion-select-option>
+      }
+    </ion-select>
+  </div> -->
+
+<ion-row>
+  <form [formGroup]="form">
+    <ion-row>
+      @for (field of fields; track $index) {
+
+      <!-- input -->
+      @if (field.type === 'input') {
+      <ion-col [size]="field.size ?? 12" class="my-2">
+        <ion-item>
+          <ion-input
+            fill="outline"
+            [type]="field.inputType || 'text'"
+            [placeholder]="field.label"
+            labelPlacement="floating"
+            color="secondary"
+            formControlName="{{ field.name }}"
+            [required]="field.required ?? false"
+          >
+            <ion-label slot="label">
+              {{ field.label }}
+              <ion-text color="danger">*</ion-text>
+            </ion-label>
+
+            <!-- validation  -->
+            @if(form.get(field.name)?.hasError('required') &&
+            form.get(field.name)?.touched){ @if(field.message){
+
+            <ion-text color="danger"> {{ field.message }} </ion-text>
+
+            } @else {
+            <ion-text color="danger">
+              {{ field.label }} is required!!!
+            </ion-text>
+            } }
+          </ion-input>
+        </ion-item>
+      </ion-col>
+      }
+
+      <!-- dropdown -->
+      @if (field.type === 'dropdown') {
+      <ion-col [size]="field.size ?? 12" class="my-2">
+        <ion-item>
+          <ion-select
+            fill="outline"
+            label="{{ field.label }}"
+            label-placement="floating"
+            formControlName="{{ field.name }}"
+            interface="popover"
+            [required]="field.required ?? false"
+            (ionChange)="handleChange($event, field, $index)"
+          >
+            @for (option of field.options; track $index) {
+            <ion-select-option [value]="option">
+              {{ option }}
+            </ion-select-option>
+            }
+          </ion-select>
+          <!-- validation  -->
+          @if(form.get(field.name)?.hasError('required') &&
+          form.get(field.name)?.touched){ @if(field.message){
+
+          <ion-text color="danger"> {{ field.message }} </ion-text>
+
+          } @else {
+          <ion-text color="danger"> {{ field.label }} is required!!! </ion-text>
+          } }
+        </ion-item>
+      </ion-col>
+      }
+
+      <!-- radio -->
+      @if (field.type === 'radio') {
+      <ion-col [size]="field.size ?? 12" class="my-2">
+        <ion-item>
+          <ion-row>
+            <ion-col size="12">
+              <ion-label class="font-bold">{{ field.label }}</ion-label>
+            </ion-col>
+            <ion-radio-group
+              formControlName="{{ field.name }}"
+              (ionChange)="handleChange($event, field, $index)"
+            >
+              <div class="w-full flex gap-2 flex-col">
+                @for (option of field.options; track $index) {
+                <div class="flex gap-2 my-2">
+                  <ion-radio [value]="option"></ion-radio>
+                  <ion-label>{{ option }}</ion-label>
+                </div>
+                }
+              </div>
+            </ion-radio-group>
+            <!-- validation  -->
+            @if(form.get(field.name)?.hasError('required') &&
+            form.get(field.name)?.touched){ @if(field.message){
+
+            <ion-text color="danger"> {{ field.message }} </ion-text>
+
+            } @else {
+            <ion-text color="danger">
+              {{ field.label }} is required!!!
+            </ion-text>
+            } }
+          </ion-row>
+        </ion-item>
+      </ion-col>
+      }
+
+      <!-- toggle -->
+      @if (field.type === 'toggle') {
+
+      <ion-col [size]="field.size ?? 12" class="my-2">
+        <ion-item>
+          <ion-label>{{ field.label }}</ion-label>
+          <ion-toggle
+            formControlName="{{ field.name }}"
+            [checked]="form.get(field.name)?.value"
+            (ionChange)="handleChange($event, field, $index)"
+          ></ion-toggle>
+          <!-- validation  -->
+          @if(form.get(field.name)?.hasError('required') &&
+          form.get(field.name)?.touched){ @if(field.message){
+
+          <ion-text color="danger"> {{ field.message }} </ion-text>
+
+          } @else {
+          <ion-text color="danger"> {{ field.label }} is required!!! </ion-text>
+          } }
+        </ion-item>
+      </ion-col>
+
+      }
+
+      <!-- condition -->
+      @if (field.condition && form.get(field.condition.fieldName)?.value ===
+      field.condition.value) {
+      <!-- Conditional fields  -->
+      @for (condField of field.condition.fields; track $index) {
+
+      <!-- input -->
+      @if (condField.type === 'input') {
+      <ion-col [size]="condField.size ?? 12" class="my-2">
+        <ion-item>
+          <ion-input
+            fill="outline"
+            [type]="condField.inputType || 'text'"
+            [placeholder]="condField.label"
+            labelPlacement="floating"
+            color="secondary"
+            formControlName="{{ condField.name }}"
+            [required]="condField.required ?? false"
+          >
+            <ion-label slot="label">
+              {{ condField.label }}
+              <ion-text color="danger">*</ion-text>
+            </ion-label>
+          </ion-input>
+
+          <!-- validation  -->
+          @if(form.get(condField.name)?.hasError('required') &&
+          form.get(condField.name)?.touched){ @if(condField.message){
+
+          <ion-text color="danger"> {{ condField.message }} </ion-text>
+
+          } @else {
+          <ion-text color="danger">
+            {{ condField.label }} is required!!!
+          </ion-text>
+          } }
+        </ion-item>
+      </ion-col>
+      }
+
+      <!-- dropdown -->
+      @if (condField.type === 'dropdown') {
+      <ion-col [size]="condField.size ?? 12" class="my-2">
+        <ion-item>
+          <ion-select
+            fill="outline"
+            label="{{ condField.label }}"
+            label-placement="floating"
+            formControlName="{{ condField.name }}"
+            interface="popover"
+            [required]="condField.required ?? false"
+          >
+            @for (option of condField.options; track $index) {
+            <ion-select-option [value]="option">
+              {{ option }}
+            </ion-select-option>
+            }
+          </ion-select>
+          <!-- validation  -->
+          @if(form.get(condField.name)?.hasError('required') &&
+          form.get(condField.name)?.touched){ @if(condField.message){
+
+          <ion-text color="danger"> {{ condField.message }} </ion-text>
+
+          } @else {
+          <ion-text color="danger">
+            {{ condField.label }} is required!!!
+          </ion-text>
+          } }
+        </ion-item>
+      </ion-col>
+      }
+
+      <!-- radio -->
+      @if (condField.type === 'radio') {
+      <ion-col [size]="condField.size ?? 12" class="my-2">
+        <ion-item>
+          <ion-row>
+            <ion-col size="12">
+              <ion-label class="font-bold">{{ condField.label }}</ion-label>
+            </ion-col>
+            <ion-radio-group formControlName="{{ field.name }}">
+              <div class="w-full flex gap-2 flex-col">
+                @for (option of condField.options; track $index) {
+                <div class="flex gap-2 my-2">
+                  <ion-radio [value]="option" class=""></ion-radio>
+                  <ion-label>{{ option }}</ion-label>
+                </div>
+                }
+              </div>
+              <!-- validation  -->
+              @if(form.get(condField.name)?.hasError('required') &&
+              form.get(condField.name)?.touched){ @if(condField.message){
+
+              <ion-text color="danger"> {{ condField.message }} </ion-text>
+
+              } @else {
+              <ion-text color="danger">
+                {{ condField.label }} is required!!!
+              </ion-text>
+              } }
+            </ion-radio-group>
+          </ion-row>
+        </ion-item>
+      </ion-col>
+      } @if (condField.type === 'toggle') {
+
+      <ion-col [size]="field.size ?? 12" class="my-2">
+        <ion-item>
+          <ion-label>{{ field.label }}</ion-label>
+          <ion-toggle
+            formControlName="{{ condField.name }}"
+            [checked]="form.get(condField.name)?.value"
+          ></ion-toggle>
+          <!-- validation  -->
+          @if(form.get(condField.name)?.hasError('required') &&
+          form.get(condField.name)?.touched){ @if(condField.message){
+
+          <ion-text color="danger"> {{ condField.message }} </ion-text>
+
+          } @else {
+          <ion-text color="danger">
+            {{ condField.label }} is required!!!
+          </ion-text>
+          } }
+        </ion-item>
+      </ion-col>
+
+      } } } }
+    </ion-row>
+  </form>
+</ion-row>

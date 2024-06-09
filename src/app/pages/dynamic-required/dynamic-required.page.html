@@ -125,6 +125,31 @@
       </ion-col>
       }
 
+      <!-- toggle -->
+      @if (field.type === 'toggle') {
+
+      <ion-col [size]="field.size ?? 12" class="my-2">
+        <ion-item>
+          <ion-label>{{ field.label }}</ion-label>
+          <ion-toggle
+            formControlName="{{ field.name }}"
+            [checked]="form.get(field.name)?.value ?? false"
+            (ionChange)="handleChange($event, field, $index)"
+          ></ion-toggle>
+          <!-- validation  -->
+          @if(form.get(field.name)?.hasError('required') &&
+          form.get(field.name)?.touched){ @if(field.message){
+
+          <ion-text color="danger"> {{field.message}} </ion-text>
+
+          } @else {
+          <ion-text color="danger"> {{field.label}} is required!!! </ion-text>
+          } }
+        </ion-item>
+      </ion-col>
+
+      }
+
       <!-- condition -->
       @if (field.condition && form.get(field.condition.fieldName)?.value ===
       field.condition.value) {
@@ -230,6 +255,29 @@
           </ion-row>
         </ion-item>
       </ion-col>
+      } @if (condField.type === 'toggle') {
+
+      <ion-col [size]="field.size ?? 12" class="my-2">
+        <ion-item>
+          <ion-label>{{ field.label }}</ion-label>
+          <ion-toggle
+            formControlName="{{ condField.name }}"
+            [checked]="form.get(condField.name)?.value"
+          ></ion-toggle>
+          <!-- validation  -->
+          @if(form.get(condField.name)?.hasError('required') &&
+          form.get(condField.name)?.touched){ @if(condField.message){
+
+          <ion-text color="danger"> {{condField.message}} </ion-text>
+
+          } @else {
+          <ion-text color="danger">
+            {{condField.label}} is required!!!
+          </ion-text>
+          } }
+        </ion-item>
+      </ion-col>
+
       } } } }
     </ion-row>
 

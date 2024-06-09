@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { CUSTOM_ELEMENTS_SCHEMA, Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import {
   FormBuilder,
@@ -24,7 +24,10 @@ import {
   IonText,
   IonRow,
   IonCol,
+  IonToggle,
 } from '@ionic/angular/standalone';
+
+import { fields, formFieldConfigs } from './data';
 
 interface FormFieldConfig {
   type: string;
@@ -67,7 +70,9 @@ interface FormFieldConfig {
     IonSelectOption,
     ReactiveFormsModule,
     CommonModule,
+    IonToggle,
   ],
+  schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })
 export class DynamicRequiredPage implements OnInit {
   form: FormGroup = new FormGroup({});
@@ -89,79 +94,101 @@ export class DynamicRequiredPage implements OnInit {
   }
 
   getFormConfig() {
-    return [
-      { label: 'Field 1', value: 'field_1', children: [] },
-      { label: 'Field 2', value: 'field_2' },
-      { label: 'Field 3', value: 'field_3' },
-      { label: 'Field 4', value: 'field_4' },
-    ];
+    // return [
+    //   { label: 'Field 1', value: 'field_1', children: [] },
+    //   { label: 'Field 2', value: 'field_2' },
+    //   { label: 'Field 3', value: 'field_3' },
+    //   { label: 'Field 4', value: 'field_4' },
+    // ];
+    return fields;
   }
 
   getFieldConfig(value: string): FormFieldConfig[] {
-    const configs: { [key: string]: FormFieldConfig[] } = {
-      field_1: [
-        {
-          type: 'input',
-          label: 'Input 1',
-          name: 'input1',
-          size: 6,
-          required: false,
-        },
-        {
-          type: 'dropdown',
-          label: 'Dropdown 1',
-          name: 'dropdown1',
-          options: ['Option 1', 'Option 2'],
-          size: 6,
-          required: true,
-          message: 'Option select kor',
-          condition: {
-            fieldName: 'dropdown1',
-            value: 'Option 1',
-            fields: [
-              {
-                type: 'input',
-                label: 'Conditional Input',
-                name: 'conditionalInput',
-                size: 6,
-                required: true,
-              },
-            ],
-          },
-        },
-      ],
-      field_2: [
-        {
-          type: 'radio',
-          label: 'Radio 1',
-          name: 'radio1',
-          options: ['Radio 1', 'Radio 2'],
-          size: 5,
-          condition: {
-            fieldName: 'radio1',
-            value: 'Radio 2',
-            fields: [
-              {
-                type: 'input',
-                label: 'Conditional Input 2',
-                name: 'conditionalInput2',
-                size: 12,
-                required: true,
-                message: 'lakh kisu',
-              },
-            ],
-          },
-        },
-        {
-          type: 'input',
-          label: 'Input 2',
-          name: 'input2',
-          inputType: 'number',
-          size: 10,
-          disabled: true,
-        },
-      ],
-    };
+    // const configs: { [key: string]: FormFieldConfig[] } = {
+    //   field_1: [
+    //     {
+    //       type: 'input',
+    //       label: 'Input 1',
+    //       name: 'input1',
+    //       size: 6,
+    //       required: false,
+    //     },
+    //     {
+    //       type: 'dropdown',
+    //       label: 'Dropdown 1',
+    //       name: 'dropdown1',
+    //       options: ['Option 1', 'Option 2'],
+    //       size: 6,
+    //       required: true,
+    //       message: 'Required!',
+    //       condition: {
+    //         fieldName: 'dropdown1',
+    //         value: 'Option 1',
+    //         fields: [
+    //           {
+    //             type: 'input',
+    //             label: 'Conditional Input',
+    //             name: 'conditionalInput',
+    //             size: 6,
+    //             required: true,
+    //           },
+    //         ],
+    //       },
+    //     },
+    //   ],
+    //   field_2: [
+    //     {
+    //       type: 'radio',
+    //       label: 'Radio 1',
+    //       name: 'radio1',
+    //       options: ['Radio 1', 'Radio 2'],
+    //       size: 5,
+    //       condition: {
+    //         fieldName: 'radio1',
+    //         value: 'Radio 2',
+    //         fields: [
+    //           {
+    //             type: 'input',
+    //             label: 'Conditional Input 2',
+    //             name: 'conditionalInput2',
+    //             size: 12,
+    //             required: true,
+    //             message: 'Required!',
+    //           },
+    //         ],
+    //       },
+    //     },
+    //     {
+    //       type: 'toggle',
+    //       label: 'Toggle 1',
+    //       name: 'toggle1',
+    //       size: 12,
+    //       required: true,
+    //       condition: {
+    //         fieldName: 'toggle1',
+    //         value: false,
+    //         fields: [
+    //           {
+    //             type: 'input',
+    //             label: 'Input 3',
+    //             name: 'input3',
+    //             inputType: 'number',
+    //             size: 10,
+    //           },
+    //         ],
+    //       },
+    //     },
+    //     {
+    //       type: 'input',
+    //       label: 'Input 2',
+    //       name: 'input2',
+    //       inputType: 'number',
+    //       size: 10,
+    //       disabled: true,
+    //     },
+    //   ],
+    // };
+    const configs: { [key: string]: FormFieldConfig[] } = formFieldConfigs;
     return configs[value] || [];
   }
 
@@ -230,11 +257,16 @@ export class DynamicRequiredPage implements OnInit {
     // console.log('index: ', index, field);
     const group: any = {};
 
-    if (
-      field.condition &&
-      field.condition.value?.toLowerCase() ===
-        event?.detail?.value?.toLowerCase()
-    ) {
+    let conditionalValue = false;
+    if (typeof field.condition?.value === 'boolean') {
+      conditionalValue = field.condition.value === event?.detail?.checked;
+    } else {
+      conditionalValue =
+        field.condition?.value?.toLowerCase() ===
+        event?.detail?.value?.toLowerCase();
+    }
+
+    if (field.condition && conditionalValue) {
       field.condition.fields.forEach((condField) => {
         const condControl = new FormControl(
           { value: '', disabled: condField.disabled ?? false },

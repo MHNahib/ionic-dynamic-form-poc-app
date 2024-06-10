@@ -86,108 +86,14 @@ export class DynamicRequiredPage implements OnInit {
       selectedField: [''],
     });
 
-    // this.form.get('selectedField')?.valueChanges.subscribe((value) => {
-    //   this.fields = this.getFieldConfig(value);
-    //   this.buildForm();
-    // });
     this.generateForm();
   }
 
   getFormConfig() {
-    // return [
-    //   { label: 'Field 1', value: 'field_1', children: [] },
-    //   { label: 'Field 2', value: 'field_2' },
-    //   { label: 'Field 3', value: 'field_3' },
-    //   { label: 'Field 4', value: 'field_4' },
-    // ];
     return fields;
   }
 
   getFieldConfig(value: string): FormFieldConfig[] {
-    // const configs: { [key: string]: FormFieldConfig[] } = {
-    //   field_1: [
-    //     {
-    //       type: 'input',
-    //       label: 'Input 1',
-    //       name: 'input1',
-    //       size: 6,
-    //       required: false,
-    //     },
-    //     {
-    //       type: 'dropdown',
-    //       label: 'Dropdown 1',
-    //       name: 'dropdown1',
-    //       options: ['Option 1', 'Option 2'],
-    //       size: 6,
-    //       required: true,
-    //       message: 'Required!',
-    //       condition: {
-    //         fieldName: 'dropdown1',
-    //         value: 'Option 1',
-    //         fields: [
-    //           {
-    //             type: 'input',
-    //             label: 'Conditional Input',
-    //             name: 'conditionalInput',
-    //             size: 6,
-    //             required: true,
-    //           },
-    //         ],
-    //       },
-    //     },
-    //   ],
-    //   field_2: [
-    //     {
-    //       type: 'radio',
-    //       label: 'Radio 1',
-    //       name: 'radio1',
-    //       options: ['Radio 1', 'Radio 2'],
-    //       size: 5,
-    //       condition: {
-    //         fieldName: 'radio1',
-    //         value: 'Radio 2',
-    //         fields: [
-    //           {
-    //             type: 'input',
-    //             label: 'Conditional Input 2',
-    //             name: 'conditionalInput2',
-    //             size: 12,
-    //             required: true,
-    //             message: 'Required!',
-    //           },
-    //         ],
-    //       },
-    //     },
-    //     {
-    //       type: 'toggle',
-    //       label: 'Toggle 1',
-    //       name: 'toggle1',
-    //       size: 12,
-    //       required: true,
-    //       condition: {
-    //         fieldName: 'toggle1',
-    //         value: false,
-    //         fields: [
-    //           {
-    //             type: 'input',
-    //             label: 'Input 3',
-    //             name: 'input3',
-    //             inputType: 'number',
-    //             size: 10,
-    //           },
-    //         ],
-    //       },
-    //     },
-    //     {
-    //       type: 'input',
-    //       label: 'Input 2',
-    //       name: 'input2',
-    //       inputType: 'number',
-    //       size: 10,
-    //       disabled: true,
-    //     },
-    //   ],
-    // };
     const configs: { [key: string]: FormFieldConfig[] } = formFieldConfigs;
     return configs[value] || [];
   }
@@ -214,42 +120,12 @@ export class DynamicRequiredPage implements OnInit {
         field.required ? Validators.required : []
       );
       group[field.name] = control;
-
-      // if (field.condition) {
-      //   field.condition.fields.forEach((condField) => {
-      //     const condControl = new FormControl(
-      //       { value: '', disabled: condField.disabled ?? false },
-      //       condField.required ? Validators.required : []
-      //     );
-      //     group[condField.name] = condControl;
-      //   });
-      // }
     });
+    this.form = new FormGroup({});
 
-    console.log('group: ', group, this.form.valid);
     this.form = this.fb.group(group);
-  }
-
-  // updateConditionalFields(field: FormFieldConfig, selectedValue: any) {
-  //   const group = { ...this.form.value };
-  //   if (selectedValue === field.condition?.value) {
-  //     field.condition?.fields.forEach((condField) => {
-  //       const condControl = new FormControl(
-  //         { value: '', disabled: condField.disabled ?? false },
-  //         condField.required ? Validators.required : []
-  //       );
-  //       group[condField.name] = condControl;
-  //     });
-  //   } else {
-  //     field.condition?.fields.forEach((condField) => {
-  //       delete group[condField.name];
-  //     });
-  //   }
-  //   this.form = this.fb.group(group);
-  // }
-
-  onSubmit() {
-    console.log(this.form.value);
+    console.log('this.form.controls: ', this.form.controls);
+    console.log('this.form.value: ', this.form.value);
   }
 
   handleChange(event: any, field: FormFieldConfig, index: number) {
@@ -284,6 +160,10 @@ export class DynamicRequiredPage implements OnInit {
         });
     }
 
-    console.log('form grp: ', this.form.valid, this.form.value);
+    // console.log('form grp: ', this.form.valid, this.form.value);
+  }
+
+  onSubmit() {
+    console.log(this.form.value);
   }
 }

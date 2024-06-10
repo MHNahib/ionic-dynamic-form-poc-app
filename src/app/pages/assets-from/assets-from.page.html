@@ -8,7 +8,7 @@
   <div class="my-2 mx-4 flex gap-2">
     @for (field of assets; track $index) {
     <ion-button
-      (click)="onSelectChange(field.key)"
+      (click)="formServiceService.onSelectChange(field.key)"
       expand="block"
       fill="clear"
       class="text-white bg-green-800"
@@ -19,12 +19,15 @@
     }
   </div>
 
-  @if (selectedField()) {
-  <app-form [form]="form" [fields]="fields"></app-form>
+  @if (formServiceService.selectedField ) {
+  <app-form></app-form>
 
   <ion-row>
     <ion-col>
-      <ion-button expand="full" type="submit" [disabled]="form.invalid"
+      <ion-button
+        expand="full"
+        type="submit"
+        [disabled]="formServiceService.form.invalid"
         >Submit</ion-button
       >
     </ion-col>

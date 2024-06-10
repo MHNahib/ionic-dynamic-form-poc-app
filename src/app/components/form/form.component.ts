@@ -3,6 +3,8 @@ import {
   Component,
   Input,
   OnInit,
+  SimpleChanges,
+  inject,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import {
@@ -31,6 +33,7 @@ import {
   IonCol,
   IonToggle,
 } from '@ionic/angular/standalone';
+import { FormServiceService } from 'src/app/services/form-service.service';
 
 interface FormFieldConfig {
   type: string;
@@ -78,65 +81,68 @@ interface FormFieldConfig {
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })
 export class FormComponent implements OnInit {
-  @Input() form!: FormGroup;
-  @Input() fields!: FormFieldConfig[];
+  formServiceService = inject(FormServiceService);
 
-  constructor() {}
+  // constructor() {}
 
   ngOnInit(): void {
     // this.buildForm();
-    console.log('comp form: ', this.form);
+    // console.log('comp form: ', this.form);
     // console.log('comp fields: ', this.fields);
     // this.buildForm();
   }
 
-  handleChange(event: any, field: FormFieldConfig, index: number) {
-    // console.log('form grp: ', this.form.valid);
-    // console.log('index: ', index, field);
-    const group: any = {};
+  // ngOnChanges(changes: SimpleChanges): void {
+  //   console.log('changes', changes);
+  // }
 
-    let conditionalValue = false;
-    if (typeof field.condition?.value === 'boolean') {
-      conditionalValue = field.condition.value === event?.detail?.checked;
-    } else {
-      conditionalValue =
-        field.condition?.value?.toLowerCase() ===
-        event?.detail?.value?.toLowerCase();
-    }
+  // handleChange(event: any, field: FormFieldConfig, index: number) {
+  //   console.log('form grp: ', this.form);
+  //   console.log('index: ', index, field);
+  //   const group: any = {};
 
-    if (field.condition && conditionalValue) {
-      field.condition.fields.forEach((condField) => {
-        const condControl = new FormControl(
-          { value: '', disabled: condField.disabled ?? false },
-          condField.required ? Validators.required : []
-        );
-        group[condField.name] = condControl;
-        this.form.addControl(condField.name, condControl);
-      });
-    } else {
-      field.condition &&
-        field?.condition?.fields.forEach((condField) => {
-          if (this.form.contains(condField.name)) {
-            this.form.removeControl(condField.name);
-          }
-        });
-    }
+  //   let conditionalValue = false;
+  //   if (typeof field.condition?.value === 'boolean') {
+  //     conditionalValue = field.condition.value === event?.detail?.checked;
+  //   } else {
+  //     conditionalValue =
+  //       field.condition?.value?.toLowerCase() ===
+  //       event?.detail?.value?.toLowerCase();
+  //   }
 
-    console.log('form grp: ', this.form.valid, this.form.value);
-  }
+  //   if (field.condition && conditionalValue) {
+  //     field.condition.fields.forEach((condField) => {
+  //       const condControl = new FormControl(
+  //         { value: '', disabled: condField.disabled ?? false },
+  //         condField.required ? Validators.required : []
+  //       );
+  //       group[condField.name] = condControl;
+  //       this.form.addControl(condField.name, condControl);
+  //     });
+  //   } else {
+  //     field.condition &&
+  //       field?.condition?.fields.forEach((condField) => {
+  //         if (this.form.contains(condField.name)) {
+  //           this.form.removeControl(condField.name);
+  //         }
+  //       });
+  //   }
 
-  buildForm() {
-    this.fields.forEach((field) => {
-      const control = new FormControl(
-        {
-          value: field.type === 'toggle' ? false : '',
-          disabled: field.disabled ?? false,
-        },
-        field.required ? Validators.required : []
-      );
-      this.form.addControl(field.name, control);
-    });
+  //   console.log('form grp: ', this.form.valid, this.form.value);
+  // }
 
-    console.log('comp form name: ', this.form);
-  }
+  // buildForm() {
+  //   this.fields.forEach((field) => {
+  //     const control = new FormControl(
+  //       {
+  //         value: field.type === 'toggle' ? false : '',
+  //         disabled: field.disabled ?? false,
+  //       },
+  //       field.required ? Validators.required : []
+  //     );
+  //     this.form.addControl(field.name, control);
+  //   });
+
+  //   console.log('comp form name: ', this.form);
+  // }
 }

@@ -3,7 +3,7 @@
   @for (field of formSchema; track $index) {
   <!-- input -->
   @if (field.type === 'input') {
-  <mat-form-field appearance="outline" style="width: 100%">
+  <mat-form-field appearance="outline" style="width: 100%" class="my-2">
     <mat-label>{{ field.label }}</mat-label>
     <input
       matInput
@@ -25,7 +25,7 @@
   <!-- dropdown -->
   <!-- <ng-container @If="field.type === 'dropdown'"> -->
   @if (field.type === 'dropdown') {
-  <mat-form-field appearance="outline" style="width: 100%">
+  <mat-form-field appearance="outline" style="width: 100%" class="my-2">
     <mat-label>{{ field.label }}</mat-label>
     <mat-select
       formControlName="{{ field.name }}"
@@ -48,23 +48,22 @@
   <!-- radio -->
   <!-- <ng-container *ngIf="field.type === 'radio'"> -->
   @if(field.type === 'radio'){
-  <mat-form-field appearance="outline" style="width: 100%">
+  <mat-radio-group
+    formControlName="{{ field.name }}"
+    (change)="handleChange($event, field, $index)"
+    style="width: 100%"
+    class="my-2"
+  >
     <mat-label>{{ field.label }}</mat-label>
-    <mat-radio-group
-      formControlName="{{ field.name }}"
-      (change)="handleChange($event, field, $index)"
-    >
-      @for (option of field.options; let idx = $index; track idx) {
-      <mat-radio-button [value]="option"> {{ option }} </mat-radio-button>
-      }
-    </mat-radio-group>
-    @if(form.get(field.name)?.hasError('required') &&
+    @for (option of field.options; let idx = $index; track idx) {
+    <mat-radio-button [value]="option"> {{ option }} </mat-radio-button>
+    } @if(form.get(field.name)?.hasError('required') &&
     form.get(field.name)?.touched){
     <mat-error>
       {{ field.message || (field.label + ' is required!!!') }}
     </mat-error>
     }
-  </mat-form-field>
+  </mat-radio-group>
   }
 
   <!-- toggle -->
@@ -73,6 +72,8 @@
     formControlName="{{ field.name }}"
     [checked]="form.get(field.name)?.value ?? false"
     (change)="onToggleChange($event, field)"
+    style="width: 100%"
+    class="my-2"
   >
     {{ field.label }}
   </mat-slide-toggle>
@@ -82,12 +83,15 @@
   <mat-error>
     {{ field.message || (field.label + ' is required!!!') }}
   </mat-error>
-  } } @if (field.condition && form.get(field.condition.fieldName)?.value ===
+  } }
+
+  <!-- conditional  -->
+  @if (field.condition && form.get(field.condition.fieldName)?.value ===
   field.condition.value) { @for (condField of field.condition.fields; track
   $index) {
   <!-- input -->
   @if (condField.type === 'input') {
-  <mat-form-field appearance="outline" style="width: 100%">
+  <mat-form-field appearance="outline" style="width: 100%" class="my-2">
     <mat-label>{{ condField.label }}</mat-label>
     <input
       matInput
@@ -107,7 +111,7 @@
 
   <!-- dropdown -->
   @if (condField.type === 'dropdown') {
-  <mat-form-field appearance="outline" style="width: 100%">
+  <mat-form-field appearance="outline" style="width: 100%" class="my-2">
     <mat-label>{{ condField.label }}</mat-label>
     <mat-select
       formControlName="{{ condField.name }}"
@@ -128,20 +132,22 @@
 
   <!-- radio -->
   @if (condField.type === 'radio') {
-  <mat-form-field appearance="outline" style="width: 100%">
-    <mat-label>{{ condField.label }}</mat-label>
-    <mat-radio-group formControlName="{{ condField.name }}">
-      @for (option of condField.options; let idx=$index; track idx) {
-      <mat-radio-button [value]="option"> {{ option }} </mat-radio-button>
-      }
-    </mat-radio-group>
-    @if (form.get(condField.name)?.hasError('required') &&
-    form.get(condField.name)?.touched) {
+
+  <mat-radio-group
+    formControlName="{{ condField.name }}"
+    style="width: 100%"
+    class="my-2"
+  >
+    <mat-label>{{condField.label}}</mat-label>
+    @for (option of condField.options; let idx=$index; track idx) {
+    <mat-radio-button [value]="option"> {{ option }} </mat-radio-button>
+    } @if(form.get(condField.name)?.hasError('required') &&
+    form.get(condField.name)?.touched){
     <mat-error>
       {{ condField.message || (condField.label + ' is required!!!') }}
     </mat-error>
     }
-  </mat-form-field>
+  </mat-radio-group>
   }
 
   <!-- toggle -->
@@ -149,6 +155,8 @@
   <mat-slide-toggle
     formControlName="{{ condField.name }}"
     [checked]="form.get(condField.name)?.value"
+    style="width: 100%"
+    class="my-2"
   >
     {{ condField.label }}
   </mat-slide-toggle>
@@ -161,7 +169,7 @@
 
   <button
     (click)="onSubmit()"
-    class="my-4 px-2 py-4 rounded-md bg-blue-500 hover:bg-blue-600"
+    class="my-2 px-2 py-4 rounded-md bg-blue-500 hover:bg-blue-600"
   >
     Submit
   </button>

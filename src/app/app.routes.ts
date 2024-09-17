@@ -27,5 +27,9 @@ export const routes: Routes = [
   {
     path: 'assets-from',
     loadComponent: () => import('./pages/assets-from/assets-from.page').then( m => m.AssetsFromPage)
+  },  {
+    path: 'schema-form',
+    loadComponent: () => import('./pages/schema-form/schema-form/schema-form.page').then( m => m.SchemaFormPage)
   },
+
 ];
